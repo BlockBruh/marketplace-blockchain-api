@@ -1,0 +1,54 @@
+version: "3.8"
+
+networks:
+  blk:
+    driver: bridge
+
+services:
+
+  blk-api:
+    image: prjdevacr.azurecr.io/prj/blockchain-api:cicd
+    depends_on:
+      - hardhat
+      - redis
+      - log
+    ports:
+      - "4000:4000"
+    env_file:
+      - docker.env
+    networks:
+      - blk
+
+  hardhat:
+    container_name: hardhat
+    image: prjdevacr.azurecr.io/blockchain/hardhat/hardhat-mumbai:latest
+    ports:
+      - "8545:8545"
+    networks:
+      - blk
+
+  redis:
+    container_name: redis
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6380:6380'
+    networks:
+      - blk
+    command: redis-server --port 6380 --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes:
+      - redis:/data
+
+  log:
+    container_name: logger
+    image: prjdevacr.azurecr.io/prj/blockchain-logging-api:707d5a7
+    env_file:
+      - docker.logger.env
+    networks:
+      - blk
+    ports:
+      - '4004:4004'
+
+volumes:
+  redis:
+    driver: local

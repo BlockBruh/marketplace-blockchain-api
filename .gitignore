@@ -1,0 +1,17 @@
+#################
+## Directories
+#################
+
+node_modules
+build/
+dist
+bin
+.idea/*
+*-lock.json
+compose
+yarn.lock
+env.properties
+
+# VS Code Env & Launch Scripts
+.vscode/
+.env
